@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ألعاب عيد الفطر التفاعلية</title>
+  <style>
+    :root {
+      --bg1: #fff8e8;
+      --bg2: #e8f7ff;
+      --card: rgba(255,255,255,0.92);
+      --text: #264653;
+      --accent: #f4a261;
+      --accent2: #2a9d8f;
+      --accent3: #e76f51;
+      --accent4: #8ecae6;
+      --good: #2a9d8f;
+      --bad: #d62828;
+      --shadow: 0 12px 30px rgba(0,0,0,0.12);
+      --radius: 26px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Arial", "Noto Sans Arabic", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, #fff1c9 0%, transparent 25%),
+        radial-gradient(circle at top left, #d7f4ff 0%, transparent 25%),
+        linear-gradient(160deg, var(--bg1), #fff, var(--bg2));
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86));
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 3px solid rgba(255,255,255,0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 200px;
+      height: 200px;
+      background: var(--accent);
+      top: -70px;
+      left: -50px;
+    }
+
+    .hero::after {
+      width: 240px;
+      height: 240px;
+      background: var(--accent4);
+      bottom: -100px;
+      right: -70px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .title-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .title-block h1 {
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      margin-bottom: 8px;
+    }
+
+    .title-block p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .speak-btn, .pill-btn, .choice, .nav-btn, .small-btn, .drag-chip, .drop-slot {
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+    }
+
+    .speak-btn, .pill-btn, .small-btn, .nav-btn {
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+    }
+
+    .speak-btn {
+      background: linear-gradient(135deg, #ffd166, #ffb703);
+      color: #4b3612;
+    }
+
+    .pill-btn {
+      background: linear-gradient(135deg, #b7efc5, #52b788);
+      color: #103b30;
+    }
+
+    .small-btn {
+      background: #eef7ff;
+      color: #24557a;
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, #8ecae6, #219ebc);
+      color: white;
+      min-width: 120px;
+    }
+
+    .speak-btn:hover, .pill-btn:hover, .small-btn:hover, .nav-btn:hover, .choice:hover, .drag-chip:hover {
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .top-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.88);
+      border-radius: 22px;
+      padding: 16px;
+      text-align: center;
+      border: 2px dashed rgba(42,157,143,0.25);
+    }
+
+    .stat .emoji { font-size: 1.7rem; display: block; margin-bottom: 4px; }
+    .stat strong { display: block; font-size: 1.4rem; margin-top: 4px; }
+
+    .games-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .game-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 2px solid rgba(255,255,255,0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .game-card .icon { font-size: 2.5rem; }
+    .game-card h3 { font-size: 1.35rem; }
+    .game-card p { line-height: 1.7; min-height: 66px; }
+
+    .screen {
+      display: none;
+      margin-top: 24px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .screen.active { display: block; }
+
+    .screen-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .screen-head h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      margin-bottom: 4px;
+    }
+
+    .sub {
+      color: #426174;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .status {
+      background: #eefbf8;
+      color: #155f52;
+      border-radius: 18px;
+      padding: 10px 14px;
+      font-weight: 700;
+    }
+
+    .big-card {
+      background: linear-gradient(180deg, #fff, #fdfdfd);
+      border: 3px solid #f5f5f5;
+      border-radius: 28px;
+      padding: 22px;
+    }
+
+    .prompt-box {
+      background: linear-gradient(135deg, #fff8ea, #fff);
+      border-radius: 24px;
+      padding: 18px;
+      font-size: clamp(1.4rem, 2.7vw, 2rem);
+      line-height: 1.8;
+      margin-bottom: 18px;
+      border: 2px solid #ffe8b5;
+      text-align: center;
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .choice {
+      border-radius: 24px;
+      min-height: 110px;
+      padding: 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(180deg, #ffffff, #f5fbff);
+      border: 3px solid #dceef8;
+      color: var(--text);
+      position: relative;
+    }
+
+    .speak-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ffd166, #ffb703);
+      color: #5a3d00;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      flex: 0 0 auto;
+    }
+
+    .speak-icon:active {
+      transform: scale(0.96);
+    }
+
+    .choice-content,
+    .with-audio-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .choice-label,
+    .audio-label {
+      flex: 1 1 auto;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .drag-chip.selected,
+    .match-item.selected {
+      outline: 4px solid rgba(33,158,188,0.25);
+    }
+
+    .choice .emoji {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .choice.correct { background: #dff7ef; border-color: #76c7b7; }
+    .choice.wrong { background: #ffe2e0; border-color: #f29c96; }
+
+    .feedback {
+      min-height: 34px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 16px 0 8px;
+    }
+
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+
+    .nav-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sequence-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #fbfdff;
+      border: 2px solid #e6f0f6;
+      border-radius: 24px;
+      padding: 16px;
+      min-height: 280px;
+    }
+
+    .panel h3 { margin-bottom: 12px; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .drag-chip {
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      border: 2px solid #cfe8f3;
+      border-radius: 18px;
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .drop-zone { display: grid; gap: 10px; }
+
+    .drop-slot {
+      width: 100%;
+      text-align: right;
+      background: #fff7ec;
+      border: 2px dashed #f4bd74;
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 1rem;
+      min-height: 64px;
+      color: #7a5e24;
+    }
+
+    .drop-slot.filled {
+      background: #ecfff8;
+      border-style: solid;
+      border-color: #81ceb0;
+      color: #104b40;
+    }
+
+    .matching-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .list-col {
+      background: #f9fcff;
+      border-radius: 24px;
+      padding: 16px;
+      border: 2px solid #e4eef7;
+    }
+
+    .match-item {
+      width: 100%;
+      background: white;
+      border: 2px solid #d7eaf7;
+      border-radius: 18px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: right;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .match-item.selected { outline: 4px solid rgba(33,158,188,0.25); }
+    .match-item.done { background: #dff7ef; border-color: #7bcab8; color: #135348; }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(70px, 1fr));
+      gap: 12px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .memory-card {
+      aspect-ratio: 1 / 1;
+      border-radius: 22px;
+      border: none;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #8ecae6, #219ebc);
+      color: white;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+      cursor: pointer;
+    }
+
+    .memory-card.revealed,
+    .memory-card.matched {
+      background: linear-gradient(135deg, #fff8ea, #ffffff);
+      color: #1f4155;
+      border: 3px solid #ffd166;
+    }
+
+    .center { text-align: center; }
+
+    .result-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 22px;
+      background: #f7fffb;
+      border: 2px solid #d7f1e8;
+      text-align: center;
+      line-height: 1.8;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      text-align: center;
+      color: #577384;
+      line-height: 1.7;
+      font-size: .97rem;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 700px) {
+      .app { padding: 14px 10px 26px; }
+      .hero, .screen { border-radius: 24px; padding: 16px; }
+      .top-stats { grid-template-columns: 1fr; }
+      .memory-grid { grid-template-columns: repeat(3, minmax(70px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="title-row">
+        <div class="title-block">
+          <h1>ألعاب عيد الفطر التفاعليّة</h1>
+          <p>
+            ألعاب بسيطة ومناسبة لأطفال الروضة، مبنيّة على موضوعات العرض: التهنئة، الصلاة، زيارة الأقارب، العيديّة، الحلوى، والتنزه.
+            كل تعليمات اللعبة والنصوص والخيارات يمكن سماعها بصوتٍ عالٍ.
+          </p>
+        </div>
+        <div>
+          <button class="speak-btn" id="speakHome">🔊 اسمع التعليمات</button>
+        </div>
+      </div>
+
+      <div class="top-stats">
+        <div class="stat">
+          <span class="emoji">⭐</span>
+          النجوم
+          <strong id="starCount">0</strong>
+        </div>
+        <div class="stat">
+          <span class="emoji">🎮</span>
+          ألعاب مكتملة
+          <strong id="doneCount">0 / 4</strong>
+        </div>
+        <div class="stat">
+          <span class="emoji">🗣️</span>
+          القراءة الصوتيّة
+          <strong id="voiceStatus">جاهزة</strong>
+        </div>
+      </div>
+      <div class="footer-note">إعداد المعلمة إيماس عابد</div>
+    </section>
+
+    <section class="games-grid" id="menuGrid"></section>
+
+    <section class="screen active" id="menuScreen">
+      <div class="screen-head">
+        <div>
+          <h2>اختر لعبة</h2>
+          <p class="sub">اضغط على أي لعبة للبدء. يمكن تشغيل الصوت في كل شاشة.</p>
+        </div>
+      </div>
+      <div class="footer-note">إعداد المعلمة إيماس عابد • هذا الملف عبارة عن صفحة HTML واحدة، جاهزة للرفع على GitHub Pages.</div>
+    </section>
+
+    <section class="screen" id="quizScreen">
+      <div class="screen-head">
+        <div>
+          <h2>لعبة ١: اختر الإجابة الصحيحة</h2>
+          <p class="sub">سؤال واحد في كل مرة، مع قراءة صوتية.</p>
+        </div>
+        <div class="status" id="quizStatus">السؤال 1</div>
+      </div>
+      <div class="big-card">
+        <div class="prompt-box" id="quizQuestion"></div>
+        <div class="center" style="margin-bottom:14px;">
+          <button class="speak-btn" id="speakQuiz">🔊 اقرأ السؤال</button>
+        </div>
+        <div class="choices-grid" id="quizChoices"></div>
+        <div class="feedback" id="quizFeedback"></div>
+        <div class="nav-row">
+          <button class="nav-btn" id="quizNext">التالي</button>
+          <button class="small-btn" id="quizRestart">إعادة اللعبة</button>
+          <button class="small-btn back-home">العودة للرئيسيّة</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="sequenceScreen">
+      <div class="screen-head">
+        <div>
+          <h2>لعبة ٢: رتّب أحداث العيد</h2>
+          <p class="sub">اضغط على البطاقة ثم اضغط على المكان المناسب لترتيب أحداث العيد.</p>
+        </div>
+        <div class="status" id="seqStatus">رتّب البطاقات</div>
+      </div>
+      <div class="big-card">
+        <div class="center" style="margin-bottom:14px;">
+          <button class="speak-btn" id="speakSequence">🔊 اقرأ التعليمات</button>
+        </div>
+        <div class="sequence-board">
+          <div class="panel">
+            <h3>البطاقات</h3>
+            <div class="chips" id="chipPool"></div>
+          </div>
+          <div class="panel">
+            <h3>الترتيب</h3>
+            <div class="drop-zone" id="dropZone"></div>
+          </div>
+        </div>
+        <div class="feedback" id="seqFeedback"></div>
+        <div class="nav-row">
+          <button class="nav-btn" id="checkSequence">تحقّق</button>
+          <button class="small-btn" id="resetSequence">إعادة اللعبة</button>
+          <button class="small-btn back-home">العودة للرئيسيّة</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="matchScreen">
+      <div class="screen-head">
+        <div>
+          <h2>لعبة ٣: وصّل السؤال بالجواب</h2>
+          <p class="sub">اضغط أولاً على السؤال، ثم على الجواب المناسب.</p>
+        </div>
+        <div class="status" id="matchStatus">أوجد الأزواج</div>
+      </div>
+      <div class="big-card">
+        <div class="center" style="margin-bottom:14px;">
+          <button class="speak-btn" id="speakMatch">🔊 اقرأ التعليمات</button>
+        </div>
+        <div class="matching-grid">
+          <div class="list-col">
+            <h3>الأسئلة</h3>
+            <div id="questionsList"></div>
+          </div>
+          <div class="list-col">
+            <h3>الأجوبة</h3>
+            <div id="answersList"></div>
+          </div>
+        </div>
+        <div class="feedback" id="matchFeedback"></div>
+        <div class="nav-row">
+          <button class="small-btn" id="resetMatch">إعادة اللعبة</button>
+          <button class="small-btn back-home">العودة للرئيسيّة</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="memoryScreen">
+      <div class="screen-head">
+        <div>
+          <h2>لعبة ٤: ذاكرة العيد</h2>
+          <p class="sub">افتح بطاقتين متماثلتين لتكوين زوج.</p>
+        </div>
+        <div class="status" id="memoryStatus">ابدأ اللعب</div>
+      </div>
+      <div class="big-card">
+        <div class="center" style="margin-bottom:14px;">
+          <button class="speak-btn" id="speakMemory">🔊 اقرأ التعليمات</button>
+        </div>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div class="result-box hidden" id="memoryResult"></div>
+        <div class="nav-row">
+          <button class="small-btn" id="resetMemory">إعادة اللعبة</button>
+          <button class="small-btn back-home">العودة للرئيسيّة</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const menuConfig = [
+      {
+        id: 'quizScreen',
+        icon: '❓',
+        title: 'اختر الإجابة الصحيحة',
+        description: 'أسئلة بسيطة من موضوع عيد الفطر مع 3 اختيارات كبيرة وواضحة.'
+      },
+      {
+        id: 'sequenceScreen',
+        icon: '🧩',
+        title: 'رتّب أحداث العيد',
+        description: 'ترتيب خطوات وأحداث العيد من التحضير حتى الزيارة والتنزه.'
+      },
+      {
+        id: 'matchScreen',
+        icon: '🔗',
+        title: 'وصّل السؤال بالجواب',
+        description: 'مطابقة بين السؤال والجواب المناسب، خاصة التهنئة ومظاهر العيد.'
+      },
+      {
+        id: 'memoryScreen',
+        icon: '🧠',
+        title: 'ذاكرة العيد',
+        description: 'بطاقات ذاكرة لطيفة بصور رمزية مناسبة لأطفال الروضة.'
+      }
+    ];
+
+    const quizData = [
+      {
+        q: 'أيُّ عيدٍ يأتي بعد شهر رمضان؟',
+        choices: [
+          { text: 'عيد الفطر السعيد', emoji: '🌙', correct: true },
+          { text: 'عيد الميلاد', emoji: '🎂', correct: false },
+          { text: 'بداية المدرسة', emoji: '🎒', correct: false }
+        ]
+      },
+      {
+        q: 'ماذا نفعل لماما قبل العيد؟',
+        choices: [
+          { text: 'نساعد ماما بتنظيف البيت', emoji: '🧹', correct: true },
+          { text: 'ننام طوال اليوم', emoji: '😴', correct: false },
+          { text: 'نخبئ الألعاب', emoji: '🪀', correct: false }
+        ]
+      },
+      {
+        q: 'أيُّ حلوى نحضِّر للعيد؟',
+        choices: [
+          { text: 'الحلوى وكعك العيد', emoji: '🧁', correct: true },
+          { text: 'الحجارة', emoji: '🪨', correct: false },
+          { text: 'الدفاتر', emoji: '📘', correct: false }
+        ]
+      },
+      {
+        q: 'ماذا نقول في العيد؟',
+        choices: [
+          { text: 'كل عام وأنتم بخير', emoji: '💚', correct: true },
+          { text: 'تصبحون على خير', emoji: '🌙', correct: false },
+          { text: 'إلى الصف بسرعة', emoji: '🏫', correct: false }
+        ]
+      },
+      {
+        q: 'أين نصلّي صلاة العيد؟',
+        choices: [
+          { text: 'في الجامع', emoji: '🕌', correct: true },
+          { text: 'في الحافلة', emoji: '🚌', correct: false },
+          { text: 'في السوق', emoji: '🛍️', correct: false }
+        ]
+      },
+      {
+        q: 'بعد الصلاة، من نزور؟',
+        choices: [
+          { text: 'الأقارب', emoji: '👨‍👩‍👧‍👦', correct: true },
+          { text: 'الطيور فقط', emoji: '🐦', correct: false },
+          { text: 'الأشجار', emoji: '🌳', correct: false }
+        ]
+      }
+    ];
+
+    const sequenceData = [
+      { emoji: '🧹', text: 'نساعد ماما بتنظيف البيت' },
+      { emoji: '🧁', text: 'نحضّر الحلوى وكعك العيد' },
+      { emoji: '🛍️', text: 'نشتري للعيد' },
+      { emoji: '🕌', text: 'نصلّي صلاة العيد' },
+      { emoji: '🤝', text: 'نزور الأقارب' },
+      { emoji: '🎁', text: 'نأخذ الهدايا والعيديّة' },
+      { emoji: '🌳', text: 'نذهب للمنتزه' },
+      { emoji: '🧸', text: 'نشتري ألعابًا' }
+    ];
+
+    const matchPairs = [
+      { q: 'أي عيد يأتي بعد شهر رمضان؟', a: 'عيد الفطر السعيد' },
+      { q: 'ماذا نقول في العيد؟', a: 'كل عام وأنتم بخير' },
+      { q: 'ماذا نجيب؟', a: 'وأنتم بخير' },
+      { q: 'أين نصلّي صلاة العيد؟', a: 'في الجامع' },
+      { q: 'من نزور في العيد؟', a: 'الأقارب' }
+    ];
+
+    const memorySymbols = [
+      { emoji: '🕌', label: 'جامع' },
+      { emoji: '🧁', label: 'حلوى' },
+      { emoji: '🎁', label: 'عيديّة' },
+      { emoji: '🤝', label: 'زيارة' },
+      { emoji: '🌳', label: 'منتزه' },
+      { emoji: '🛍️', label: 'شراء' }
+    ];
+
+    const state = {
+      stars: Number(localStorage.getItem('eidStars') || 0),
+      completed: JSON.parse(localStorage.getItem('eidCompleted') || '{}'),
+      quizIndex: 0,
+      quizLocked: false,
+      quizScore: 0,
+      selectedChip: null,
+      sequencePlaced: [],
+      matchSelectedQuestion: null,
+      matchDone: 0,
+      memoryDeck: [],
+      memoryOpen: [],
+      memoryMatched: 0,
+      memoryMoves: 0
+    };
+
+    const screens = [...document.querySelectorAll('.screen')];
+    const menuGrid = document.getElementById('menuGrid');
+    const starCount = document.getElementById('starCount');
+    const doneCount = document.getElementById('doneCount');
+    const voiceStatus = document.getElementById('voiceStatus');
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function updateTopStats() {
+      starCount.textContent = state.stars;
+      const done = Object.values(state.completed).filter(Boolean).length;
+      doneCount.textContent = `${done} / 4`;
+    }
+
+    function saveProgress() {
+      localStorage.setItem('eidStars', String(state.stars));
+      localStorage.setItem('eidCompleted', JSON.stringify(state.completed));
+      updateTopStats();
+    }
+
+    function reward(gameId, stars = 1) {
+      if (!state.completed[gameId]) {
+        state.stars += stars;
+        state.completed[gameId] = true;
+        saveProgress();
+      }
+    }
+
+    function showScreen(id) {
+      screens.forEach(screen => screen.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getArabicVoice() {
+      const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+      return voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ar')) || null;
+    }
+
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        voiceStatus.textContent = 'غير متوفّرة';
+        return;
+      }
+      if (!text) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(String(text).trim());
+      u.lang = 'ar-SA';
+      u.rate = 0.9;
+      u.pitch = 1;
+      const arabicVoice = getArabicVoice();
+      if (arabicVoice) u.voice = arabicVoice;
+      u.onstart = () => { voiceStatus.textContent = 'تعمل'; };
+      u.onerror = () => { voiceStatus.textContent = 'حسب الجهاز'; };
+      try {
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(u);
+      } catch (e) {
+        voiceStatus.textContent = 'حسب الجهاز';
+      }
+    }
+
+    function speakOption(text) {
+      speak(text);
+    }
+
+    function createListenButton(text, label = 'اسمع') {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'speak-icon';
+      btn.textContent = '🔊';
+      btn.title = label;
+      btn.setAttribute('aria-label', `${label}: ${text}`);
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakOption(text);
+      });
+      return btn;
+    }
+
+    function attachOptionSpeech(element, text) {
+      if (!element || !text) return;
+      element.setAttribute('aria-label', text);
+    }
+
+    function renderMenu() {
+      menuGrid.innerHTML = '';
+      menuConfig.forEach(game => {
+        const card = document.createElement('article');
+        card.className = 'game-card';
+        const icon = document.createElement('div');
+        icon.className = 'icon';
+        icon.textContent = game.icon;
+
+        const title = document.createElement('h3');
+        title.textContent = game.title;
+
+        const desc = document.createElement('p');
+        desc.textContent = game.description;
+
+        const row = document.createElement('div');
+        row.className = 'with-audio-row';
+
+        const startBtn = document.createElement('button');
+        startBtn.className = 'pill-btn';
+        startBtn.textContent = 'ابدأ اللعبة';
+        startBtn.addEventListener('click', () => showScreen(game.id));
+
+        const listenBtn = createListenButton(`${game.title}. ${game.description}`, 'اسمع وصف اللعبة');
+        row.append(startBtn, listenBtn);
+
+        card.append(icon, title, desc, row);
+        menuGrid.appendChild(card);
+      });
+    }
+
+    function setupQuiz() {
+      state.quizIndex = 0;
+      state.quizScore = 0;
+      state.quizLocked = false;
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const item = quizData[state.quizIndex];
+      const questionEl = document.getElementById('quizQuestion');
+      const choicesEl = document.getElementById('quizChoices');
+      const feedbackEl = document.getElementById('quizFeedback');
+      const statusEl = document.getElementById('quizStatus');
+      document.getElementById('quizNext').disabled = true;
+      questionEl.textContent = item.q;
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'feedback';
+      statusEl.textContent = `السؤال ${state.quizIndex + 1} من ${quizData.length}`;
+      choicesEl.innerHTML = '';
+      shuffle(item.choices).forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'choice';
+        btn.type = 'button';
+
+        const emoji = document.createElement('span');
+        emoji.className = 'emoji';
+        emoji.textContent = choice.emoji;
+
+        const row = document.createElement('div');
+        row.className = 'choice-content';
+
+        const label = document.createElement('span');
+        label.className = 'choice-label';
+        label.textContent = choice.text;
+
+        const listenBtn = createListenButton(choice.text, 'اسمع الخيار');
+
+        row.append(label, listenBtn);
+        btn.append(emoji, row);
+
+        attachOptionSpeech(btn, choice.text);
+        btn.addEventListener('click', () => handleQuizChoice(btn, choice.correct));
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleQuizChoice(button, correct) {
+      if (state.quizLocked) return;
+      state.quizLocked = true;
+      const feedbackEl = document.getElementById('quizFeedback');
+      const buttons = [...document.querySelectorAll('#quizChoices .choice')];
+      buttons.forEach(btn => btn.disabled = true);
+      if (correct) {
+        button.classList.add('correct');
+        feedbackEl.textContent = 'أحسنت! إجابة صحيحة 🌟';
+        feedbackEl.className = 'feedback good';
+        state.quizScore += 1;
+        speak('أحسنت. إجابة صحيحة.');
+      } else {
+        button.classList.add('wrong');
+        const correctBtn = buttons.find(btn => btn.textContent.trim() !== button.textContent.trim() ? false : false);
+        buttons.forEach(btn => {
+          const txt = btn.textContent.replace(/\s+/g,' ').trim();
+          const current = quizData[state.quizIndex].choices.find(c => txt.includes(c.text));
+          if (current && current.correct) btn.classList.add('correct');
+        });
+        feedbackEl.textContent = 'هذه ليست الإجابة الصحيحة. انظر إلى الإجابة الصحيحة ✅';
+        feedbackEl.className = 'feedback bad';
+        speak('هذه ليست الإجابة الصحيحة.');
+      }
+      document.getElementById('quizNext').disabled = false;
+    }
+
+    function nextQuiz() {
+      if (!state.quizLocked) return;
+      state.quizIndex += 1;
+      state.quizLocked = false;
+      if (state.quizIndex >= quizData.length) {
+        document.getElementById('quizQuestion').textContent = `انتهت اللعبة! حصلت على ${state.quizScore} من ${quizData.length}`;
+        document.getElementById('quizChoices').innerHTML = '';
+        document.getElementById('quizFeedback').textContent = state.quizScore >= quizData.length - 1
+          ? 'ممتاز جدًا! لقد أنهيت لعبة الأسئلة 🎉'
+          : 'أحسنت! أنهيت لعبة الأسئلة.';
+        document.getElementById('quizFeedback').className = 'feedback good';
+        document.getElementById('quizStatus').textContent = 'مكتملة';
+        document.getElementById('quizNext').disabled = true;
+        reward('quizScreen', 2);
+        speak(`انتهت اللعبة. حصلت على ${state.quizScore} من ${quizData.length}`);
+        return;
+      }
+      renderQuizQuestion();
+    }
+
+    function setupSequence() {
+      state.selectedChip = null;
+      state.sequencePlaced = new Array(sequenceData.length).fill(null);
+      const pool = document.getElementById('chipPool');
+      const zone = document.getElementById('dropZone');
+      const feedback = document.getElementById('seqFeedback');
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      pool.innerHTML = '';
+      zone.innerHTML = '';
+      document.getElementById('seqStatus').textContent = 'رتّب البطاقات';
+
+      shuffle(sequenceData).forEach(item => {
+        const chip = document.createElement('button');
+        chip.className = 'drag-chip';
+        chip.type = 'button';
+
+        const labelWrap = document.createElement('div');
+        labelWrap.className = 'audio-label';
+        labelWrap.textContent = `${item.emoji} ${item.text}`;
+
+        const row = document.createElement('div');
+        row.className = 'with-audio-row';
+        row.append(labelWrap, createListenButton(item.text, 'اسمع البطاقة'));
+
+        chip.appendChild(row);
+        attachOptionSpeech(chip, item.text);
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.drag-chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          state.selectedChip = item;
+          speak(`اخترت: ${item.text}`);
+        });
+        pool.appendChild(chip);
+      });
+
+      sequenceData.forEach((_, idx) => {
+        const slot = document.createElement('button');
+        slot.className = 'drop-slot';
+        slot.type = 'button';
+        slot.textContent = `المكان ${idx + 1}`;
+        attachOptionSpeech(slot, `المكان ${idx + 1}`);
+        slot.addEventListener('click', () => placeInSlot(idx, slot));
+        zone.appendChild(slot);
+      });
+    }
+
+    function placeInSlot(index, slot) {
+      if (!state.selectedChip) return;
+      state.sequencePlaced[index] = state.selectedChip;
+      slot.classList.add('filled');
+      slot.innerHTML = `${index + 1}. ${state.selectedChip.emoji} ${state.selectedChip.text}`;
+      attachOptionSpeech(slot, `${index + 1}. ${state.selectedChip.text}`);
+      speak(`وضعت ${state.selectedChip.text} في المكان ${index + 1}`);
+      [...document.querySelectorAll('.drag-chip')].forEach(chip => {
+        if (chip.textContent.replace(/\s+/g,' ').trim().includes(state.selectedChip.text)) {
+          chip.remove();
+        }
+      });
+      state.selectedChip = null;
+    }
+
+    function checkSequence() {
+      const feedback = document.getElementById('seqFeedback');
+      if (state.sequencePlaced.some(x => !x)) {
+        feedback.textContent = 'أكمل جميع الأماكن أولاً.';
+        feedback.className = 'feedback bad';
+        speak('أكمل جميع الأماكن أولاً');
+        return;
+      }
+      const correct = state.sequencePlaced.every((item, idx) => item.text === sequenceData[idx].text);
+      if (correct) {
+        feedback.textContent = 'رائع! رتّبت أحداث العيد بشكل صحيح 🌟';
+        feedback.className = 'feedback good';
+        document.getElementById('seqStatus').textContent = 'مكتملة';
+        reward('sequenceScreen', 2);
+        speak('رائع. رتبت أحداث العيد بشكل صحيح.');
+      } else {
+        feedback.textContent = 'ليست كل البطاقات في مكانها الصحيح. جرّب مرة أخرى.';
+        feedback.className = 'feedback bad';
+        speak('حاول مرة أخرى');
+      }
+    }
+
+    function setupMatch() {
+      state.matchSelectedQuestion = null;
+      state.matchDone = 0;
+      document.getElementById('matchFeedback').textContent = '';
+      document.getElementById('matchFeedback').className = 'feedback';
+      document.getElementById('matchStatus').textContent = 'أوجد الأزواج';
+      const qWrap = document.getElementById('questionsList');
+      const aWrap = document.getElementById('answersList');
+      qWrap.innerHTML = '';
+      aWrap.innerHTML = '';
+      matchPairs.forEach((pair, idx) => {
+        const qBtn = document.createElement('button');
+        qBtn.className = 'match-item';
+        qBtn.type = 'button';
+        qBtn.dataset.index = idx;
+        qBtn.dataset.type = 'q';
+        const qRow = document.createElement('div');
+        qRow.className = 'with-audio-row';
+        const qLabel = document.createElement('span');
+        qLabel.className = 'audio-label';
+        qLabel.textContent = pair.q;
+        qRow.append(qLabel, createListenButton(pair.q, 'اسمع السؤال'));
+        qBtn.appendChild(qRow);
+        attachOptionSpeech(qBtn, pair.q);
+        qBtn.addEventListener('click', () => selectQuestion(qBtn));
+        qWrap.appendChild(qBtn);
+      });
+      shuffle(matchPairs.map((pair, idx) => ({...pair, originalIndex: idx}))).forEach(pair => {
+        const aBtn = document.createElement('button');
+        aBtn.className = 'match-item';
+        aBtn.type = 'button';
+        aBtn.dataset.index = pair.originalIndex;
+        aBtn.dataset.type = 'a';
+        const aRow = document.createElement('div');
+        aRow.className = 'with-audio-row';
+        const aLabel = document.createElement('span');
+        aLabel.className = 'audio-label';
+        aLabel.textContent = pair.a;
+        aRow.append(aLabel, createListenButton(pair.a, 'اسمع الجواب'));
+        aBtn.appendChild(aRow);
+        attachOptionSpeech(aBtn, pair.a);
+        aBtn.addEventListener('click', () => selectAnswer(aBtn));
+        aWrap.appendChild(aBtn);
+      });
+    }
+
+    function selectQuestion(btn) {
+      if (btn.classList.contains('done')) return;
+      document.querySelectorAll('#questionsList .match-item').forEach(item => item.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.matchSelectedQuestion = btn.dataset.index;
+    }
+
+    function selectAnswer(btn) {
+      if (btn.classList.contains('done') || state.matchSelectedQuestion === null) return;
+      const feedback = document.getElementById('matchFeedback');
+      if (btn.dataset.index === state.matchSelectedQuestion) {
+        btn.classList.add('done');
+        const qBtn = [...document.querySelectorAll('#questionsList .match-item')].find(q => q.dataset.index === state.matchSelectedQuestion);
+        qBtn.classList.add('done');
+        qBtn.classList.remove('selected');
+        state.matchSelectedQuestion = null;
+        state.matchDone += 1;
+        feedback.textContent = 'أحسنت! هذا تطابق صحيح.';
+        feedback.className = 'feedback good';
+        speak('أحسنت');
+        if (state.matchDone === matchPairs.length) {
+          document.getElementById('matchStatus').textContent = 'مكتملة';
+          feedback.textContent = 'ممتاز! أنهيت جميع الأزواج 🎉';
+          reward('matchScreen', 2);
+        }
+      } else {
+        feedback.textContent = 'هذا ليس الجواب المناسب. جرّب مرة أخرى.';
+        feedback.className = 'feedback bad';
+        speak('هذا ليس الجواب المناسب');
+      }
+    }
+
+    function setupMemory() {
+      state.memoryOpen = [];
+      state.memoryMatched = 0;
+      state.memoryMoves = 0;
+      const deck = shuffle([...memorySymbols, ...memorySymbols].map((item, i) => ({ ...item, uid: i, matched: false })));
+      state.memoryDeck = deck;
+      document.getElementById('memoryStatus').textContent = 'ابحث عن الأزواج';
+      document.getElementById('memoryResult').classList.add('hidden');
+      renderMemory();
+    }
+
+    function renderMemory() {
+      const grid = document.getElementById('memoryGrid');
+      grid.innerHTML = '';
+      state.memoryDeck.forEach((card, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'memory-card';
+        const isRevealed = state.memoryOpen.includes(idx) || card.matched;
+        if (isRevealed) {
+          btn.classList.add(card.matched ? 'matched' : 'revealed');
+          btn.innerHTML = `${card.emoji}<br><span style="font-size:.8rem">${card.label}</span>`;
+        } else {
+          btn.textContent = '؟';
+          attachOptionSpeech(btn, 'بطاقة');
+        }
+        btn.addEventListener('click', () => flipMemoryCard(idx));
+        grid.appendChild(btn);
+      });
+    }
+
+    function flipMemoryCard(index) {
+      const card = state.memoryDeck[index];
+      if (card.matched || state.memoryOpen.includes(index) || state.memoryOpen.length === 2) return;
+      state.memoryOpen.push(index);
+      speak(card.label);
+      renderMemory();
+      if (state.memoryOpen.length === 2) {
+        state.memoryMoves += 1;
+        const [a, b] = state.memoryOpen;
+        const first = state.memoryDeck[a];
+        const second = state.memoryDeck[b];
+        if (first.label === second.label) {
+          setTimeout(() => {
+            first.matched = true;
+            second.matched = true;
+            state.memoryOpen = [];
+            state.memoryMatched += 1;
+            document.getElementById('memoryStatus').textContent = `عدد الأزواج: ${state.memoryMatched} / ${memorySymbols.length}`;
+            renderMemory();
+            if (state.memoryMatched === memorySymbols.length) {
+              const result = document.getElementById('memoryResult');
+              result.classList.remove('hidden');
+              result.innerHTML = `أحسنت! أنهيت لعبة الذاكرة بعد <strong>${state.memoryMoves}</strong> محاولة. 🎉`;
+              document.getElementById('memoryStatus').textContent = 'مكتملة';
+              reward('memoryScreen', 2);
+              speak('أحسنت. أنهيت لعبة الذاكرة.');
+            }
+          }, 500);
+        } else {
+          setTimeout(() => {
+            state.memoryOpen = [];
+            renderMemory();
+          }, 850);
+        }
+      }
+    }
+
+    document.getElementById('speakHome').addEventListener('click', () => {
+      speak('مرحباً. هذه ألعاب عيد الفطر التفاعلية بإعداد المعلمة إيماس عابد. اختر لعبة للبدء. جميع التعليمات والخيارات تقرأ بصوت عالٍ.');
+    });
+    document.getElementById('speakQuiz').addEventListener('click', () => speak(document.getElementById('quizQuestion').textContent));
+    document.getElementById('speakSequence').addEventListener('click', () => speak('اضغط على البطاقة، ثم اضغط على المكان المناسب لترتيب أحداث العيد.'));
+    document.getElementById('speakMatch').addEventListener('click', () => speak('اضغط على السؤال أولاً، ثم اختر الجواب المناسب.'));
+    document.getElementById('speakMemory').addEventListener('click', () => speak('افتح بطاقتين متماثلتين لتكوين زوج.'));
+
+    document.getElementById('quizNext').addEventListener('click', nextQuiz);
+    document.getElementById('quizRestart').addEventListener('click', setupQuiz);
+    document.getElementById('checkSequence').addEventListener('click', checkSequence);
+    document.getElementById('resetSequence').addEventListener('click', setupSequence);
+    document.getElementById('resetMatch').addEventListener('click', setupMatch);
+    document.getElementById('resetMemory').addEventListener('click', setupMemory);
+    document.querySelectorAll('.back-home').forEach(btn => btn.addEventListener('click', () => showScreen('menuScreen')));
+
+    renderMenu();
+    updateTopStats();
+    setupQuiz();
+    setupSequence();
+    setupMatch();
+    setupMemory();
+
+    if ('speechSynthesis' in window) {
+      speechSynthesis.onvoiceschanged = () => {
+        const voices = speechSynthesis.getVoices();
+        voiceStatus.textContent = voices.some(v => v.lang && v.lang.toLowerCase().startsWith('ar')) ? 'تعمل' : 'حسب الجهاز';
+      };
+    } else {
+      voiceStatus.textContent = 'غير متوفّرة';
+    }
+  </script>
+</body>
+</html>
